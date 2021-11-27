@@ -85,4 +85,6 @@ while not game_over:
 
 
     pygame.display.flip()
-    clock.tick(60)        
+    clock.tick(60) 
+
+pygame.quit()       
