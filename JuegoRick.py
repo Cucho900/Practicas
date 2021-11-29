@@ -102,7 +102,7 @@ def game_over_screen():
     screen.blit(fondo, [0, 0])
     draw_text(screen, "Rick vs PickleRick", 65, size[0] // 2, size[1] // 4)
     draw_text(screen, "Mata a todos los pickle Rick que puedas, si recibes 5 golpes pierdes", 18, size[0] // 2, size[1] // 2)
-    draw_text(screen, "Presiona una tecla para jugar", 20, size[0] // 2, size[1] * 3//4)
+    draw_text(screen, "Presiona r para jugar", 20, size[0] // 2, size[1] * 3//4)
     pygame.display.flip()
     waiting = True
     while waiting:
@@ -112,7 +112,8 @@ def game_over_screen():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.KEYUP:
-                waiting = False
+                if event.key == pygame.K_r:
+                    waiting = False
 
 #Sonidos
 laser_sound = pygame.mixer.Sound("assets/Sonido_Laser.mp3")
