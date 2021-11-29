@@ -8,7 +8,7 @@ screen_size = (900, 700)
 class Moneda(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Moneda.png").convert()
+        self.image = pygame.image.load("assets/Moneda.png").convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
 
@@ -22,7 +22,7 @@ class Moneda(pygame.sprite.Sprite):
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Player.png").convert()
+        self.image = pygame.image.load("assets/Player.png").convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
 
@@ -34,7 +34,7 @@ class Player(pygame.sprite.Sprite):
 class Laser(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("laser.png").convert()
+        self.image = pygame.image.load("assets/laser.png").convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
     def update(self):
