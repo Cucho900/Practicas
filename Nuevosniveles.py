@@ -32,9 +32,32 @@ class Game():
     def init_game(self):
         self.screen.blit(fondo, [0, 0])
         self.text(self.screen, "Rick vs PickleRick", 65, size[0] // 2, size[1] // 4)
-        self.text(self.screen, "Mata a todos los pickle Rick que puedas, si recibes 5 golpes pierdes", 18, size[0] // 2, size[1] // 2)
+        self.text(self.screen, "Mata a todos los pickle Rick que puedas, mata a 50 y sube de nivel, si recibes 5 golpes pierdes", 18, size[0] // 2, size[1] // 2)
         self.text(self.screen, f"Preparado para el nivel {self.nivel} ?", 18, size[0] // 2, size[1] * 2//3 )
         self.text(self.screen, "Presiona r para jugar", 20, size[0] // 2, size[1] * 3//4)
+        pygame.display.flip()
+        waiting = True
+        while waiting:
+            self.clock.tick(60)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYUP:
+                    if event.key == pygame.K_r:
+                        waiting = False
+        #Creamos pepinillos
+        for _ in range(10):
+            pepinillo = Pepinillo(self.pepinillo_speedy + self.nivel, self.pepinillo_speedx + self.nivel, self.nivel)
+            self.all_sprites.add(pepinillo)
+            self.pepinillo_list.add(pepinillo)
+    
+    def victory(self):
+        self.nivel = 0
+        self.score = 0
+        self.screen.blit(fondo, [0, 0])
+        self.text(self.screen, "Ganaste!", 65, size[0] // 2, size[1] // 4)
+        self.text(self.screen, "Presiona r para jugar de nuevo", 20, size[0] // 2, size[1] * 3//4)
         pygame.display.flip()
         waiting = True
         while waiting:
@@ -81,10 +104,15 @@ class Game():
             if self.score % 10 == 0:
                 self.nivel += 1
                 self.player.shield = 100
+                if self.nivel == len(enemy_pictures):
+                    self.victory()                    
+
+                self.pepinillo_list.remove()
+                self.all_sprites.remove(self.pepinillo_list)
                 self.init_game()
 
             explosion_sound.play()
-            pepinillo = Pepinillo(self.pepinillo_speedy + self.nivel, self.pepinillo_speedx + self.nivel)
+            pepinillo = Pepinillo(self.pepinillo_speedy + self.nivel, self.pepinillo_speedx + self.nivel, self.nivel)
             self.all_sprites.add(pepinillo)
             self.pepinillo_list.add(pepinillo)
 
@@ -93,7 +121,7 @@ class Game():
         for _ in collide_list:
             self.player.shield -= 20
             choque_sound.play()
-            pepinillo = Pepinillo(self.pepinillo_speedy + self.nivel, self.pepinillo_speedx + self.nivel)
+            pepinillo = Pepinillo(self.pepinillo_speedy + self.nivel, self.pepinillo_speedx + self.nivel, self.nivel)
             self.all_sprites.add(pepinillo)
             self.pepinillo_list.add(pepinillo)
             if self.player.shield <= 0:
@@ -124,7 +152,7 @@ class Game():
 class Player(pygame.sprite.Sprite):
     def __init__(self, all_sprites, laser_list):
         super().__init__()
-        self.image = pygame.image.load("assets/Player.png").convert()
+        self.image = pygame.image.load("assets/Rick_frontal.png").convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.centerx = size[0] // 2
@@ -171,9 +199,10 @@ class Laser(pygame.sprite.Sprite):
             self.kill()
 
 class Pepinillo(pygame.sprite.Sprite):
-    def __init__(self, speedy, speedx):
+    def __init__(self, speedy, speedx, nivel):
         super().__init__()
-        self.image = pygame.image.load("assets/Pepinillo.png").convert()
+        self.imagen_de_nivel = nivel
+        self.image = enemy_pictures[self.imagen_de_nivel]
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = random.randrange(size[0] - self.rect.width)
@@ -198,8 +227,29 @@ laser_sound = pygame.mixer.Sound("assets/Sonido_Laser.mp3")
 pygame.mixer.Sound.set_volume(laser_sound, 0.1)
 explosion_sound = pygame.mixer.Sound("assets/Explosion.mp3")
 choque_sound = pygame.mixer.Sound("assets/Choque.mp3")
+# pygame.mixer.music.load("assets/Music.mp3")
+# pygame.mixer.music.set_volume(0.05)
+
+#Imagenes Rick
+right_pictures = []
+right = ["assets/Rick_derecha1.png", "assets/Rick_derecha2.png", "assets/Rick_derecha3.png", "assets/Rick_derecha4.png"]
+for image in right:
+    right_pictures.append(pygame.image.load(image).convert())
+
+left_pictures = []
+left = ["assets/Rick_izquierda1.png", "assets/Rick_izquierda2.png", "assets/Rick_izquierda3.png", "assets/Rick_izquierda4.png"]
+for rick in left:
+    left_pictures.append(pygame.image.load(rick).convert())
+
+#Imagenes de enemigos
+enemy_pictures = []
+pictures = ["assets/Pepinillo.png", "assets/Limon.png", "assets/Bola_de_nieve.png", "assets/Popo.png", "assets/Meeseeks.png", "assets/Frijol.png"]
+for picture in pictures:
+    enemy_pictures.append(pygame.image.load(picture).convert())
 
 game = Game(screen, clock, 0)
+
+# pygame.mixer.music.play(loops=-1)
 
 while game.running:
     if game.game_over:
@@ -207,12 +257,6 @@ while game.running:
         game.init_game()
 
         game.game_over = False
-
-        #Creamos pepinillos
-        for i in range(30):
-            pepinillo = Pepinillo(7, 7)
-            game.all_sprites.add(pepinillo)
-            game.pepinillo_list.add(pepinillo)
 
     clock.tick(60)
 
